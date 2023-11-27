@@ -1,4 +1,4 @@
-// program 1-22/1-23
+// program 1-25
 #ifndef currency_
 #define currency_
 
@@ -11,12 +11,13 @@ enum signType{plus, minus};
 
 class currency
 {
+    // 现在大部分声明在public内
+    friend ostream& operator<<(ostream&, const currency&);  
+
 public:
-    // 构造函数
     currency(signType theSign = plus,
              unsigned long theDollars = 0,
              unsigned int theCents = 0);
-    // 析构函数
     ~currency() {}
     void setValue(signType, unsigned long, unsigned int);
     void setValue(double);
@@ -30,7 +31,6 @@ public:
     currency operator+(const currency&) const;
     currency& operator+=(const currency& x)
         {amount += x.amount; return *this;}
-    void output(ostream&) const;
 
 private:
     long amount;
@@ -67,9 +67,10 @@ currency currency::operator+(const currency& x) const
     return result;
 }
 
-void currency::output(ostream& out) const
+// overload <<
+ostream& operator<<(ostream& out, const currency& x)
 {
-    long theAmount = amount;
+    long theAmount = x.amount;
     if (theAmount < 0) 
     {
         out << '-'; 
@@ -80,12 +81,6 @@ void currency::output(ostream& out) const
     int cents = theAmount - dollars * 100;
     if (cents < 10) out << '0';
     out << cents;
-}
-
-// overload <<
-ostream& operator<<(ostream& out, const currency& x)
-{
-    x.output(out); 
     return out;
 }
 

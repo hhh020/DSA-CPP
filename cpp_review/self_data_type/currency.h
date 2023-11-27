@@ -1,8 +1,8 @@
 // program 1-13~17
-#include <iostream>
 #ifndef currency_
 #define currency_
 
+#include <iostream>
 #include "../illegalParameterValue/illegalParameterValue.h"
 
 using std::cout;            // 存在std::plus,为防止命名冲突不能使用using namespace std

@@ -1,11 +1,8 @@
-// program 1-22/1-23
-#ifndef currency_
-#define currency_
-
 #include "../illegalParameterValue/illegalParameterValue.h"
-#include <ostream>
+#include <iostream>
 
-using std::ostream;
+using std::cout;
+using std::cin;
 
 enum signType{plus, minus};
 
@@ -27,14 +24,53 @@ public:
     unsigned int getCents() const 
         {return (amount < 0) ? -amount - getDollars() * 100 
                                : amount - getDollars() * 100;}
-    currency operator+(const currency&) const;
-    currency& operator+=(const currency& x)
+    currency add(const currency&) const;
+    currency& increment(const currency& x)
         {amount += x.amount; return *this;}
-    void output(ostream&) const;
+    void output() const;
+    void input();
+    currency subtract(const currency&) const;
+    currency percent(const double) const;
+    currency multiply(const double) const;
+    currency divide(const double) const;
 
 private:
     long amount;
 };
+
+void currency::input()
+{
+    cout << "please input the amout\n";
+    double theAmout;
+    cin >> theAmout;
+    setValue(theAmout);
+}
+
+currency currency::subtract(const currency& x) const
+{
+    currency y;
+    y.amount = amount - x.amount;
+    return y;
+}
+
+currency currency::multiply(const double x) const
+{
+    currency result;
+    result.amount = (long) amount * x;
+    return result;
+}
+
+currency currency::percent(const double x) const
+{
+    return multiply(x/100);
+}
+
+currency currency::divide(const double x) const
+{
+    currency result;
+    result.amount = (long) amount / x;
+    return result;
+}
 
 currency::currency(signType theSign, unsigned long theDollars,
                                            unsigned int theCents)
@@ -60,33 +96,38 @@ void currency::setValue(double theAmount)
         amount = (long) ((theAmount + 0.001) * 100);
 }
 
-currency currency::operator+(const currency& x) const
+currency currency::add(const currency& x) const
 {
-    currency result;
-    result.amount = amount + x.amount;
-    return result;
+    currency y;
+    y.amount = amount + x.amount;
+    return y;
 }
 
-void currency::output(ostream& out) const
+void currency::output() const
 {
     long theAmount = amount;
-    if (theAmount < 0) 
+    if (theAmount < 0)
     {
-        out << '-'; 
+        cout << '-';
         theAmount = -theAmount;
     }
     long dollars = theAmount / 100;
-    out << '$' << dollars << '.';
+    cout << '$' << dollars << '.';
     int cents = theAmount - dollars * 100;
-    if (cents < 10) out << '0';
-    out << cents;
+    if (cents < 10) cout << '0';
+    cout << cents << '\n';
 }
 
-// overload <<
-ostream& operator<<(ostream& out, const currency& x)
+int main()
 {
-    x.output(out); 
-    return out;
+    currency a,b;
+    a.setValue(30);
+    b.input();
+    b.output();
+    a.subtract(b).output();
+    a.percent(79).output();
+    b.multiply(-2.5).output();
+    b.divide(-3).output();
+    return 0;
 }
 
-#endif

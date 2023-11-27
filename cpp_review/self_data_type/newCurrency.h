@@ -1,3 +1,4 @@
+// program 1-19
 #include "../illegalParameterValue/illegalParameterValue.h"
 
 enum signType{plus, minus};
@@ -28,4 +29,3 @@ public:
 private:
     long amount;
 };
-
