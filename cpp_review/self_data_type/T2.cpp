@@ -1,4 +1,4 @@
-// exercise 1.15-1.18
+// exercise 1.16
 #ifndef currency_
 #define currency_
 

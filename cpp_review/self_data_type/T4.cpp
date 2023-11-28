@@ -1,3 +1,4 @@
+// exercise 1.18
 #ifndef currency_
 #define currency_
 
