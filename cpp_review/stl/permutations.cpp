@@ -1,3 +1,4 @@
+// program 1-35
 #include <algorithm>    // 定义copy和next_permutation
 #include <iostream>
 #include <iterator>
@@ -19,5 +20,5 @@ void permutations(T list[], int m)
     do {
         copy(list, list+m+1, std::ostream_iterator<T>(cout, ""));
         cout << '\n';
-    } while (next_permutation(list, list+m+1))
+    } while (next_permutation(list, list+m+1));
 }

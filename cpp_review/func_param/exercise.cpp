@@ -24,7 +24,7 @@ size_t count(const T a[], int n, const T& value)
 }
 
 template<typename T>        // T3: 23/11/9
-void fill(T a[], int start, int end,const T& value)
+void fill(T a[], int start, int end, const T& value)
 {
     for(int i = start; i < end; i++)
         a[i] = value;
@@ -40,7 +40,7 @@ T inner_product(T a[], T b[], unsigned n)
 }
 
 template<typename T>        // T5: 23/11/12
-void ioda(T a[], unsigned n, T value)
+void iota(T a[], unsigned n, T value)
 {
     for (int i = 0; i < n; i++)
         a[i] = value + i;
@@ -126,7 +126,7 @@ void test5()
 {
     auto a = new double[10];
     auto value{5.3};
-    ioda(a,10,value);
+    iota(a,10,value);
     for (int i = 0; i < 10; i++)
         cout << a[i] << '\n';
 }
