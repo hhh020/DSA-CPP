@@ -1,4 +1,8 @@
-// program 2-5/2-6
+// program 2-5/2-6/2-11
+#include <algorithm>
+
+using std::swap;
+
 template<class T>
 void rank(T a[], int n, int r[])
 {
@@ -26,4 +30,19 @@ void rearrange(T a[], int n, int r[])
         a[i] = u[i];
     
     delete [] u;
+}
+
+// 原地重排数组元素使之有序
+template<class T>
+void rearrange_swap(T a[], int n, int r[])
+{
+    for (int i = 0; i < n; i++)
+    {
+        while (r[i] != i)
+        {
+            int t = r[i];
+            swap(a[i],a[t]);
+            swap(r[i],r[t]);
+        }
+    }
 }
