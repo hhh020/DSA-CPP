@@ -25,8 +25,23 @@ public:
     int capacity() const { return arrayLength; }
     void trimToSize();
     void setSize(int);
-    T& operator[](int i);
-    
+    T& operator[](int) const;
+    bool operator==(const arrayList<T>&) const;
+    bool operator!=(const arrayList<T>&) const;
+    bool operator<(const arrayList<T>&) const;
+    void push_back(const T&);
+    void pop_back();
+    void swap(arrayList<T>&);
+    void reserve(int);
+    T set(int,const T&);
+    void clear();
+    void removeRange(int,int);
+    int lastIndexOf(const T&);
+    void erase_shrink(int theIndex);
+    void reverse();
+    void leftshift(int);
+    void circularShift(int);
+
 protected:
     void checkIndex(int theIndex) const;
             // 若索引 theIndex 无效，则抛出异常
@@ -34,6 +49,7 @@ protected:
     int arrayLength;        // 一维数组的容量
     int listSize;           // 线性表的元素个数
     int coefficient;        // 数组长度改变的系数
+    int initialCapacity;     // 初始容量
 };
 
 #endif
