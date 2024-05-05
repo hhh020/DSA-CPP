@@ -19,6 +19,9 @@ public:
     // 构造函数
     iterator(T* thePosition = 0) {position = thePosition;}
 
+    // 赋值
+    void operator=(T* thePostion) {position = thePostion;}
+    
     // 解引用操作符
     T& operator*() const {return *position;}
     T* operator->() const {return &*position;}
@@ -52,7 +55,7 @@ public:
             {return position != right.position;}
     bool operator==(const iterator right) const
             {return position == right.position;}
-            
+           
 protected:
     T* position;
 };

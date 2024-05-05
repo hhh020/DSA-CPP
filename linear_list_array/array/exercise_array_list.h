@@ -2,6 +2,7 @@
 #define __ARRAY_LIST__
 
 #include "../data_structure/linear_list.h"
+#include "./exercise_iterator.h"
 
 template<class T>
 class arrayList : public LinearList<T>
@@ -41,7 +42,17 @@ public:
     void reverse();
     void leftshift(int);
     void circularShift(int);
+    void half();
+    // arrayList<T> meld(const arrayList<T>& a, const arrayList<T>& b);
+    void merge(const arrayList<T>& a, const arrayList<T>& b);
+    void spilt(arrayList<T>& a, arrayList<T>& b);
+    
+    Iterator<T> begin() {return Iterator<T>(element);}
+    Iterator<T> end() {return Iterator<T>(element, listSize);}
 
+    // 迭代器成员
+    Iterator<T> iter;
+    
 protected:
     void checkIndex(int theIndex) const;
             // 若索引 theIndex 无效，则抛出异常

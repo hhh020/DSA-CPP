@@ -1,4 +1,4 @@
-// exercise 5.4 ~ 5.18, 5.20
+// exercise 5.4 ~ 5.18, 5.20, 5.22 ~ 5.26, 5.28
 #include "exercise_array_list.h"
 #include "../../myexcption.h"
 
@@ -15,6 +15,7 @@ using std::copy_backward;
 using std::ostream_iterator;
 using std::cout;
 using std::cerr;
+using std::sort;
 
 // 构造函数
 template<class T>
@@ -130,7 +131,7 @@ void arrayList<T>::trimToSize()
 }
 
 // 使线性表的大小等于指定的大小
-// 若线性表开始的大小小于指定的大小，则不增加元素；否则删除多余的元素
+// 若线性表开始的大小等于指定的大小，则不增加元素；否则删除多余的元素
 template<class T>
 void arrayList<T>::setSize(int length)
 {
@@ -289,7 +290,7 @@ void arrayList<T>::removeRange(int b, int e)
     checkIndex(e - 1);
 
     if (e <= b)
-        cerr << "end should be > begin\n";
+        cerr << "end should be > p\n";
     
     copy(element + e, element + listSize, element + b);
 
@@ -370,6 +371,103 @@ void arrayList<T>::leftshift(int i)
     listSize -= i;
 }
 
+// 将线性表的元素向左循环移动i个位置
+template<class T>
+void arrayList<T>::circularShift(int i)
+{
+    // 将整个线性表逆转
+    for (int k = 0; k < listSize - k - 1; k++)
+        std::swap(element[k], element[listSize-k-1]);
+    
+    // 将前 L-i 个元素逆转
+    for (int k = 0; k < listSize - i - k - 1; k++)
+        std::swap(element[k], element[listSize-i-k-1]);
+
+    // 将后i个元素逆转
+    for (int k = 0; listSize - i + k < listSize - k - 1; k++)
+        std::swap(element[listSize-i+k], element[listSize-k-1]);
+}
+
+// 将线性表元素隔一个删除一个
+template<class T>
+void arrayList<T>::half()
+{
+    int i = 1;
+    for (int j = 2; j < listSize; i++, j+=2)
+        element[i] = element[j];
+    
+    listSize = i;
+}
+
+// 外部函数, 将线性表元素隔一个删除一个
+template<class T>
+void half(arrayList<T>& a)
+{
+    // 确定起始删除位置
+    int size = a.size();
+    int p = size - 1;
+    if (size % 2 == 1) p--;
+
+    while (p > 0)
+    {
+        a.erase(p);
+        p -= 2;
+    }
+}
+
+// 生成一个新的线性表，交替包含a和b中的元素
+template<class T>
+arrayList<T> meld(const arrayList<T>& a, const arrayList<T>& b)
+{
+    int minsize = min(a.size(), b.size());
+    auto c = new arrayList<T>(a.size() + b.size());
+
+    for (int i = 0; i < 2 * minsize; i++)
+    {
+        if (i % 2 == 0) c->push_back(a[i/2]);
+        else c->push_back(b[i/2]);
+    }
+    while (minsize < a.size())  c->push_back(a[minsize++]);
+    while (minsize < b.size())  c->push_back(b[minsize++]);
+
+    return *c;
+}
+
+// merge, 使用有序线性表a、b生成一个新的有序线性表
+template<class T>
+void arrayList<T>::merge(const arrayList<T>& a, const arrayList<T>& b)
+{
+    this->clear();
+    int it1 = 0, it2 = 0;
+    while (it1 < a.size() && it2 < b.size())
+    {
+        if (a[it1] <= b[it2])
+        {
+            this->push_back(a[it1]);
+            it1++;
+        }
+        else
+        {
+            this->push_back(b[it2]);
+            it2++;
+        }
+    }
+    while (it1 < a.size())  this->push_back(a[it1++]);
+    while (it2 < b.size())  this->push_back(b[it2++]);
+}
+
+// spilt, 生成两个线性表a,b. a包含索引为偶数的元素, b包含索引为奇数的元素
+template<class T>
+void arrayList<T>::spilt(arrayList<T>& a, arrayList<T>& b)
+{
+    a.clear();
+    b.clear();
+    for (int i = 0; i < this->size(); i++)
+    {
+        if (i & 0x1)    b.push_back(get(i));
+        else            a.push_back(get(i));
+    }
+}
 
 void test4()
 {
@@ -659,8 +757,106 @@ void test23()
     delete a;
 }
 
+void test24()
+{
+    auto a = new arrayList<int>(5);
+    for (int i = 0; i < 5; i++)
+        a->insert(i,i);
+    cout << "a: " << (*a) << '\n';
+    a->circularShift(2);
+    cout << "循环左移2个位置后a: " << (*a) << '\n';
+    delete a;
+}
+
+void test25()
+{
+    auto a = new arrayList<int>(10);
+    int len;
+    cout << "请输入线性表长度: ";
+    std::cin >> len;
+
+    for (int i = 0; i < len; i++)
+        a->insert(i,i);
+    cout << "a: " << (*a) << '\n';
+    cout << "size: " << a->size() << '\n';
+    a->half();
+    cout << "成员函数half作用后a: " << (*a) << '\n';
+    cout << "size: " << a->size() << '\n';
+    delete a;
+}
+
+void test26()
+{
+    auto a = new arrayList<int>(10);
+    int len;
+    cout << "请输入线性表长度: ";
+    std::cin >> len;
+
+    for (int i = 0; i < len; i++)
+        a->insert(i,i);
+    cout << "a: " << (*a) << '\n';
+    cout << "size: " << a->size() << '\n';
+    half(*a);
+    cout << "外部函数half作用后a: " << (*a) << '\n';
+    cout << "size: " << a->size() << '\n';
+    delete a;
+}
+
+void test27()
+{
+    auto a = new arrayList<int>(10);
+    for (int i = 0; i < 10; i++)
+        a->insert(i, 9 - i);
+    cout << "排序前: " << (*a) << '\n';
+    sort(a->begin(), a->end());
+    cout << "排序后: " << (*a) << '\n';
+    delete a;
+}
+
+void test28()
+{
+    auto a = new arrayList<int>(5);
+    for (int i = 0; i < 5; i++)     a->push_back(i);
+    auto b = new arrayList<int>(3);
+    for (int i = 0; i < 3; i++)     b->push_back(i);
+    auto c = meld(*a, *b);
+    cout << "c: " << c << '\n';
+    delete a;
+    delete b;
+}
+
+void test29()
+{
+    auto a = new arrayList<int>(5);
+    for (int i = 1; i < 5; i++)     a->push_back(2 * i - 1);
+    auto b = new arrayList<int>(5);
+    for (int i = 0; i < 4; i++)     b->push_back(2 * i);
+    auto c = new arrayList<int>(10);
+    c->merge(*a, *b);
+    cout << "c: " << *c << '\n';
+    delete a;
+    delete b;
+    delete c;
+}
+
+void test30()
+{
+    auto a = new arrayList<int>();
+    auto b = new arrayList<int>();
+    auto c = new arrayList<int>(7);
+    for (int i = 0; i < 7; i++)     c->push_back(i);
+    c->spilt(*a, *b);
+
+    cout << "c: " << *c << '\n';
+    cout << "a: " << *a << '\n';
+    cout << "b: " << *b << '\n';
+    delete a;
+    delete b;
+    delete c;
+}
+
 int main()
 {
-    test23();
+    test30();
     return 0;
 }
