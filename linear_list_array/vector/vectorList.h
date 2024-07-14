@@ -17,7 +17,7 @@ class vectorList : public LinearList<T>
         ~vectorList()   {delete element;};
     
         // ADT 方法
-        bool empty() const override {return element->empty()};
+        bool empty() const override {return element->empty();}
         int size() const override {return (int) element->size();}
         T& get(int theIndex) const override;
         int indexOf(const T& theElement) const override;
