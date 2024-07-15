@@ -1,20 +1,23 @@
-/* program 6-2 ~ 6-9 */
-#ifndef __CHAIN__
-#define __CHAIN__
+/**
+ *  program 6-12 
+ *  and provide complete code
+*/
+#ifndef __EXTENDED_CHAIN__
+#define __EXTENDED_CHAIN__
 
-#include "../linearList.h"
+#include "extendedLinearList.h"
 #include "chainNode.h"
 #include "../../myexcption.h"
 #include <sstream>
 
 template<class T>
-class chain : public LinearList<T>
+class extendedChain : public extendedLinearList
 {
     public:
         // constructor & destructor
-        chain(int initialCapacity = 10);       
-        chain(const chain<T>&);
-        ~chain();
+        extendedChain(int initialCapacity = 10);
+        extendedChain(const extendedChain<T>&);
+        ~extendedChain();
 
         // ADT
         bool empty() const override{return listSize == 0;}
@@ -24,15 +27,19 @@ class chain : public LinearList<T>
         void erase(int theIndex) override;
         void insert(int theIndex, const T& theElement) override;
         void output(ostream& out) const override;
-    
+        void clear() override;
+        void push_back(const T& theElement) override;
+
     protected:
         void checkIndex(int theIndex) const;    // index invaild, throw exception
         chainNode<T>* firstNode;                // point to first node
+        chainNode<T>* lastNode;                 // point to last node
         int listSize;                           // element number of linear list
 };
 
+// no change
 template<class T>
-chain<T>::chain(int initialCapacity)
+extendedChain<T>::extendedChain(int initialCapacity)
 {
     if (initialCapacity < 1)
     {
@@ -42,43 +49,49 @@ chain<T>::chain(int initialCapacity)
     }
 }
 
+// mainly replace targetNode to lastNode
 template<class T>
-chain<T>::chain(const chain<T>& theList)
+extendedChain<T>::extendedChain(const extendedChain<T>& theList)
 {
     listSize = theList.listSize;
 
     if (listSize == 0) // theList is empty
     {
         firstNode == NULL;
+        lastNode == NULL;
         return;
     }
 
     chainNode<T>* sourceNode = theList.firstNode;       // 复制theList的节点
     firstNode = new chainNode<T>(sourceNode->element);  // 复制theList的首元素
     sourceNode = sourceNode->next;
-    chainNode<T>* targetNode = firstNode;               // 当前链表*this的最后一个节点
+    lastNode = firstNode;                               // 当前链表*this的最后一个节点
     while (sourceNode != NULL)                          // 复制剩余元素
     {
-        targetNode->next = new chainNode<T>(sourceNode->element);
-        targetNode = targetNode->next;
+        lastNode->next = new chainNode<T>(sourceNode->element);
+        lastNode = lastNode->next;
         sourceNode = sourceNode->next;
     }
-    targetNode->next = NULL;                            // 链表结束
+
+    lastNode->next = NULL;                              // 链表结束
 }
 
+// add lastNode
 template<class T>
-chain<T>::~chain()
+extendedChain<T>::~extendedChain()
 {
-    while (firstNode != NULL)
+    while (firstNode != lastNode)
     {
         chainNode<T>* nextNode = firstNode->next;
         delete firstNode;
         firstNode = nextNode;
     }
+    delete lastNode;
 }
 
+// no change
 template<class T>
-void chain<T>::checkIndex(int theIndex) const
+void extendedChain<T>::checkIndex(int theIndex) const
 {
     if (theIndex < 0 || theIndex > listSize - 1)
     {
@@ -88,12 +101,9 @@ void chain<T>::checkIndex(int theIndex) const
     }
 }
 
-/**
- * 返回索引为theIndex的元素
- * 若该元素不存在，则抛出异常
-*/
+// no change
 template<class T>
-T& chain<T>::get(int theIndex) const
+T& extendedChain<T>::get(int theIndex) const
 {
     checkIndex(theIndex);
 
@@ -103,12 +113,9 @@ T& chain<T>::get(int theIndex) const
     return currentNode->element;
 }
 
-/**
- * 返回元素theElement首次出现的索引
- * 若该元素不存在，则返回-1
-*/
+// no change
 template<class T>
-int chain<T>::indexOf(const T& theElement) const
+int extendedChain<T>::indexOf(const T& theElement) const
 {
     chainNode<T> *currentNode = firstNode;
     int index = 0;          
@@ -125,17 +132,18 @@ int chain<T>::indexOf(const T& theElement) const
 }
 
 /**
- * 删除索引为theIndex的元素
- * 若该元素不存在，则抛出异常
+ * 删除的元素是*lastNode时要改变lastNode
 */
 template<class T>
-void chain<T>::erase(int theIndex)
+void extendedChain<T>::erase(int theIndex)
 {
     checkIndex(theIndex);
 
     chainNode<T> *deleteNode;
     if (theIndex = 0)
     {
+        if (firstNode == lastNode)
+            lastNode = lastNode->next;
         deleteNode = firstNode;
         firstNode = firstNode->next;
     }
@@ -146,6 +154,8 @@ void chain<T>::erase(int theIndex)
             p = p->next;
         
         deleteNode = p->next;
+        if (deleteNode == lastNode)
+            lastNode = p;
         p->next = p->next->next;
     }
 
@@ -154,10 +164,10 @@ void chain<T>::erase(int theIndex)
 }
 
 /**
- * 在索引为theIndex的位置上插入元素theElement
+ * 在表头和表尾插入需要改动lastNode
 */
 template<class T>
-void chain<T>::insert(int theIndex, const T& theElement)
+void extendedChain<T>::insert(int theIndex, const T& theElement)
 {
     if (theIndex < 0 || theIndex > listSize)
     {
@@ -168,7 +178,10 @@ void chain<T>::insert(int theIndex, const T& theElement)
 
     if (theIndex == 0)
         // 在链表头插入
-        firstNode = new chainNode<T>(theElement, firstNode);
+        firstNode = lastNode = new chainNode<T>(theElement, firstNode);
+    else if (theIndex == listSize)
+        // 在链表尾插入
+        push_back(theElement);
     else
     {
         // 寻找插入位置的前驱
@@ -181,20 +194,38 @@ void chain<T>::insert(int theIndex, const T& theElement)
     listSize++;
 }
 
-/* 把链表放入输出流 */
+/**
+ * 删除链表所有节点
+*/
 template<class T>
-void chain<T>::output(ostream& out) const
+void extendedChain<T>::clear()
 {
-    for (chainNode<T> *currentNode = firstNode; currentNode != NULL; currentNode = currentNode->next)
-        out << currentNode->element << " ";
+    while (firstNode != NULL)
+    {
+        chainNode<T>* nextNode = firstNode->next;
+        delete firstNode;
+        firstNode = nextNode;
+    }
+    listSize = 0;
 }
 
-/* 重载<< */
+/**
+ * 在链表尾端插入元素theElement的节点
+*/
 template<class T>
-ostream& operator<<(ostream& out, const chain<T>& x)
+void extendedChain<T>::push_back(const T& theElement)
 {
-    x.output(out);
-    return out;
+    chainNode<T>* newNode = new chainNode(theElement, NULL);
+    if (firstNode == NULL)
+    {
+        firstNode = lastNode = newNode;
+    }
+    else
+    {
+        lastNode->next = newNode;
+        lastNode = newNode;
+    }
+    listSize++;
 }
 
 #endif
