@@ -3,7 +3,7 @@
 #define __CIRCULAR_LIST_WITH_HEADER__
 
 #include "../linearList.h"
-#include "chainNode.h"
+#include "../singly_linked_list/chainNode.h"
 #include "../../myexcption.h"
 #include <sstream>
 
