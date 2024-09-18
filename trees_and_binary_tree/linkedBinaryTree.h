@@ -1,4 +1,4 @@
-// 11-9 
+// 11-9 ~ 11-11 
 #include "binaryTree.h"
 #include "binaryTreeNode.h"
 
@@ -25,6 +25,8 @@ public:
             root = nullptr;
             treeSize = 0;
         }
+    void preOrderOutput() {preOrder(output); cout << '\n';}
+    int height() const {return height(root);}
 
 private:
     binaryTreeNode<E> *root;
@@ -35,6 +37,8 @@ private:
     static void inOrder(binaryTreeNode<E> *t);
     static void postOrder(binaryTreeNode<E> *t);
     static void dispose(binaryTreeNode<E> *t) {delete t;}
+    static void output(binaryTreeNode<E> *t) {cout << t->element << ' ';}
+    static int height(binaryTreeNode<E> *t);
 };
 
 // 类的私有前序遍历方法
@@ -71,4 +75,16 @@ void linkedBinaryTree<E>::postOrder(binaryTreeNode<E> *t)
         postOrder(t->rightChild);
         linkedBinaryTree<E>::visit(t);
     }
+}
+
+// 确定二叉树高度
+template<typename E>
+int linkedBinaryTree<E>::height(binaryTreeNode<E> *t)
+{
+    if (t == nullptr)
+        return 0;
+    int hl = height(t->leftChild);
+    int hr = height(t->rightChild);
+    if (hl > hr) return ++hl;
+    else return ++hr;
 }
