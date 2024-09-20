@@ -1,4 +1,8 @@
 // 11-9 ~ 11-11 
+#ifndef __LINKED_BINARY_TREE__
+#define __LINKED_BINARY_TREE__
+
+#include <iostream>
 #include "binaryTree.h"
 #include "binaryTreeNode.h"
 
@@ -88,3 +92,5 @@ int linkedBinaryTree<E>::height(binaryTreeNode<E> *t)
     if (hl > hr) return ++hl;
     else return ++hr;
 }
+
+#endif
