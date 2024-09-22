@@ -1,7 +1,7 @@
 // program 11-8 
 // binary tree ADT
-#ifndef BINARY_TREE_H
-#define BINARY_TREE_H
+#ifndef __BINARY_TREE_H__
+#define __BINARY_TREE_H__
 
 template<typename T>
 class binaryTree
